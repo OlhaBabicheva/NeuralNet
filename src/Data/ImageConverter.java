@@ -21,24 +21,17 @@ public class ImageConverter {
         }
         try {
             BufferedImage original_image = ImageIO.read(file);
-            Image resultingImage = original_image.getScaledInstance(img_size, img_size, Image.SCALE_DEFAULT);
-            BufferedImage image = new BufferedImage(img_size, img_size, BufferedImage.TYPE_INT_RGB);
-            image.getGraphics().drawImage(resultingImage, 0, 0, null);
+            Image rescaledImage = original_image.getScaledInstance(img_size, img_size, Image.SCALE_DEFAULT);
+            BufferedImage image = new BufferedImage(img_size, img_size, BufferedImage.TYPE_BYTE_GRAY);
+            image.getGraphics().drawImage(rescaledImage, 0, 0, null);
 
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     int p = image.getRGB(x,y);
-
-                    int a = (p>>24)&0xff;
-                    int r = (p>>16)&0xff;
-                    int g = (p>>8)&0xff;
-                    int b = p&0xff;
-
-                    int avg = (r+g+b)/3; //calculate average
-
-                    p = (a<<24) | (avg<<16) | (avg<<8) | avg; //replace RGB value with avg
-                    grayscale[y][x] = p;
+                    grayscale[y][x] = Math.round((Math.round(p*-1)/16777216.0)*256);
+                    System.out.print(grayscale[y][x] + " ");
                 }
+                System.out.println();
             }
         }catch(IOException e) {
             System.out.println(e);
