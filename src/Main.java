@@ -12,12 +12,10 @@ public class Main {
         System.out.print("Path to image: ");
         String path = sc.nextLine();
         double[][] image = ImageConverter.convertImage(path);
-        LabeledImage pretty_image = new LabeledImage(image, 7); // label to be set automatically by program
 
         System.out.print("Path to dataset: ");
         String d_path = sc.nextLine();
         List<LabeledImage> images = new CsvReader().readCsv(d_path);
         images.get(0).printData();
-        pretty_image.prettyPrintData();
     }
 }
