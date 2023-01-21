@@ -373,4 +373,15 @@ public class Matrix {
             System.out.println(Arrays.toString(C[i]));
         }
     }
+
+    public void printAsImage(){
+        double[][] array = A;
+
+        for(int i=0; i < array.length; i++){
+            for(int j=0; j < array[0].length; j++){
+                System.out.print(" .^*$@#".charAt((int) Math.round((Math.round(array[i][j])/256.0)*6)) + " ");
+            }
+            System.out.println();
+        }
+    }
 }
