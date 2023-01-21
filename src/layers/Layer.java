@@ -1,4 +1,7 @@
 package layers;
+
+import Data.Matrix;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,14 +14,8 @@ public abstract class Layer {
     protected Layer _nextLayer;
     protected Layer _previousLayer;
 
-    public abstract double[] getOutput(List<double[][]> input);
-    public abstract double[] getOutput(double[] input);
-    public abstract void backPropagation(double[] dLdO);
-    public abstract void backPropagation(List<double[][]> dLdO);
-    public abstract int getOutputLength();
-    public abstract int getOutputRows();
-    public abstract int getOutputCols();
-    public abstract int getOutputElements();
+    public abstract Matrix getOutput(Matrix input);
+    public abstract void backPropagation(Matrix dLdO);
 
     public double[] matrixToVector(List<double[][]> input){
         int length = input.size();

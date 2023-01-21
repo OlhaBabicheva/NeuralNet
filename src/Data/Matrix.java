@@ -151,6 +151,29 @@ public class Matrix {
     }
 
     /**
+     * Matrix subtraction C = A - B
+     * 
+     * @param B Matrix
+     * @return Matrix addition A - B
+     * @throws ArithmeticException Matrix dimensions do not match
+     */
+    public Matrix minusMatrix(Matrix B) {
+        if (this.nRows != B.nRows || this.nCols != B.nCols) {
+            throw new ArithmeticException("Dimensions must be the same");
+        }
+
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+          for (int col = 0; col < nCols; col++) {
+            C[row][col] = A[row][col] - B.A[row][col];
+          }
+        }
+        return X;
+    }
+
+    /**
      * Multiply Matrix by scalar, C = A*s
      * 
      * @param s scalar
@@ -163,6 +186,30 @@ public class Matrix {
         for (int row = 0; row < nRows; row++) {
             for (int col = 0; col < nCols; col++) {
               C[row][col] = scalar * A[row][col];
+            }
+        }
+        return X;
+    }
+
+    public Matrix applyReLu() {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[row][col] = A[row][col] <= 0 ? 0 : A[row][col];
+            }
+        }
+        return X;
+    }
+
+    public Matrix applyDerivativeReLu(double leak) {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[row][col] = A[row][col] <= 0 ? leak : 1;
             }
         }
         return X;
