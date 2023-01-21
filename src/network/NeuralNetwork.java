@@ -60,7 +60,16 @@ public class NeuralNetwork {
      * @return Matrix (a - y)
      */
     public Matrix costFunctionDerivative(Matrix networkOutput, Matrix correctAnswer) {
-        return networkOutput.minusMatrix(correctAnswer);
+        Matrix result = networkOutput.minusMatrix(correctAnswer);
+        double[][] res_arr = result.getArray();
+        double err = 0.0;
+        for(int i = 0; i < result.getnRows(); ++i){
+            for(int j = 0; j < result.getnCols(); ++j){
+                err += Math.abs(res_arr[i][j]);
+            }
+        }
+        System.out.print("Cost: " + err + "\r");
+        return result;
     }
 
     /**
@@ -100,6 +109,21 @@ public class NeuralNetwork {
             for (int i = 0; i < 784; i++) {
                 data[i][0] = vector[i];
             }
+
+        Matrix imData = new Matrix(data);
+
+        Matrix out = _layers.get(0).getOutput(imData);
+        return getMaxIndex(out);
+    }
+
+    public int predict(Matrix image) {
+        double[][] data = new double[784][1];
+        double[] vector;
+        vector = image.timesScalar(1.0/255).toVector();
+
+        for (int i = 0; i < 784; i++) {
+            data[i][0] = vector[i];
+        }
 
         Matrix imData = new Matrix(data);
 

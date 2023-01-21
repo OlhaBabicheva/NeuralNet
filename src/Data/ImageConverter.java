@@ -29,9 +29,7 @@ public class ImageConverter {
                 for (int x = 0; x < image.getWidth(); x++) {
                     int p = image.getRGB(x,y);
                     grayscale[y][x] = Math.round((Math.round(p*-1)/16777216.0)*256);
-                    System.out.print(grayscale[y][x] + " ");
                 }
-                System.out.println();
             }
         }catch(IOException e) {
             System.out.println(e);
