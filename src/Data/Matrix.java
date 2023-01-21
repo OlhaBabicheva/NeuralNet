@@ -220,7 +220,7 @@ public class Matrix {
         double[][] C = X.getArray();
 
         for (int row = 0; row < nRows; row++) {
-            int sum = 0;
+            double sum = 0;
             for (int col = 0; col < nCols; col++) {
                 sum += A[row][col]; 
             }
@@ -239,7 +239,7 @@ public class Matrix {
         double[][] C = X.getArray();
 
         for (int col = 0; col < nCols; col++) {
-            int sum = 0;
+            double sum = 0;
             for (int row = 0; row < nRows; row++) {
                 sum += A[row][col]; 
             }
@@ -275,7 +275,8 @@ public class Matrix {
 
     /**
      * Applies ReLu function on every entry in Matrix.
-     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * DO NOT USE NUMERICALLY UNSTABLE!!!
+     * WORK IN PROGRESS
      * 
      * @return ReLu(Matrix)
      */
@@ -293,7 +294,8 @@ public class Matrix {
 
     /**
      * Applies ReLu derivative function on every entry in Matrix.
-     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * DO NOT USE NUMERICALLY UNSTABLE!!!
+     * WORK IN PROGRESS
      * 
      * @return ReLu'(Matrix)
      */
@@ -312,7 +314,7 @@ public class Matrix {
     /**
      * Applies Sigmoid function to given element.
      * 
-     * @return sigmodi value
+     * @return sigmoid value
      */
     public double Sigmoid(double z) {
         if (z >= 0)

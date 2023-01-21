@@ -11,7 +11,7 @@ public class CsvReader {
     public List<LabeledImage> readCsv(String path){
         List<LabeledImage> images = new ArrayList<>();
         try (BufferedReader csvReader = new BufferedReader(new FileReader(path))){
-            String line; // read and discard the first line
+            String line = csvReader.readLine(); // read and discard the first line
             while((line = csvReader.readLine()) != null){
                 String[] line_data = line.split(",");
                 double[][] data = new double[img_size][img_size];
