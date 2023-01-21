@@ -6,17 +6,15 @@ import network.NeuralNetwork;
 import layers.FullyConnectedLayer;
 import layers.Layer;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
 import static java.util.Collections.shuffle;
-import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        final long SEED = 513224;
-        int miniBatchSize = 8;
-        double learningRate = 0.5;
+        final long SEED = 5132244;
+        int miniBatchSize = 2;
+        double learningRate = 0.2;
 
         // Temporary network creation
         List<Layer> layers = new ArrayList<>();
@@ -28,13 +26,13 @@ public class Main {
         NeuralNetwork net = new NeuralNetwork(layers, 255);
 
         // Type your paths for mnist dataset
-        String trainPath = "C:\\Users\\Mati\\Desktop\\mnist_train.csv";
-        String testPath = "C:\\Users\\Mati\\Desktop\\mnist_test.csv";
+        String trainPath = "C:\\Users\\konra\\IdeaProjects\\NeuralNet\\Data\\mnist_train.csv";
+        String testPath = "C:\\Users\\konra\\IdeaProjects\\NeuralNet\\Data\\mnist_test.csv";
 
         List<LabeledImage> imagesTrain = new CsvReader().readCsv(trainPath);
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
         
-        int epochs = 5;
+        int epochs = 20;
         float rate = 0;
         
         for(int i = 0; i < epochs; i++){
@@ -47,25 +45,26 @@ public class Main {
                 LabeledImage[] images = imagesTrain.subList(k, k + miniBatchSize).toArray(new LabeledImage[0]);
                 miniBatches.add(images);
             }
-
-            System.out.println("Training!!!");
+            float m = 0;
             for (LabeledImage[] miniBatch:miniBatches) {
+                float percent = m/miniBatches.size()*100;
+                System.out.print("Round " + (i+1) + ": " + Math.round(percent) + "%  [" + "#".repeat(Math.round(percent/10)) + " ".repeat(10 - Math.round(percent/10)) + "]\r");
                 net.train(miniBatch);
+                m++;
             }
 
             // Checking network accuracy
             rate = net.test(imagesTest);
 
-            System.out.println("Success rate after round " + i + ": " + rate);
-
-            // Need to implement displaying current value of loss function to show how it goes down
+            System.out.println("Success rate after round " + (i+1) + ": " + String.format("%.4f", rate) + ", Average cost: " + String.format("%.4f", net.average));
         }
-
-        // Scanner sc = new Scanner(System.in);
-        // System.out.print("Path to image: ");
-        // String path = sc.nextLine();
-        // Matrix image = new Matrix(ImageConverter.convertImage(path));
-        // image.printAsImage();
-        // System.out.println("Predicted: " + net.predict(image));
+        while (true){
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Path to image: ");
+            String path = sc.nextLine();
+            Matrix image = new Matrix(ImageConverter.convertImage(path));
+            image.printAsImage();
+            System.out.println("Predicted: " + net.predict(image));
+        }
     }
 }
