@@ -143,9 +143,32 @@ public class Matrix {
         double[][] C = X.getArray();
 
         for (int row = 0; row < nRows; row++) {
-          for (int col = 0; col < nCols; col++) {
-            C[row][col] = A[row][col] + B.A[row][col];
-          }
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = A[row][col] + B.A[row][col];
+            }
+        }
+        return X;
+    }
+
+    /**
+     * Matrix subtraction C = A - B
+     * 
+     * @param B Matrix
+     * @return Matrix subtraction A - B
+     * @throws ArithmeticException Matrix dimensions do not match
+     */
+    public Matrix minusMatrix(Matrix B) {
+        if (this.nRows != B.nRows || this.nCols != B.nCols) {
+            throw new ArithmeticException("Dimensions must be the same");
+        }
+
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = A[row][col] - B.A[row][col];
+            }
         }
         return X;
     }
@@ -169,6 +192,174 @@ public class Matrix {
     }
 
     /**
+     * Converts Matrix to one dimensional vector
+     * 
+     * @return flattened Matrix
+     */
+    public double[] toVector() {
+        int newRows = nRows * nCols;
+        double[] C = new double[newRows];
+
+        int i = 0;
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[i] = A[row][col];
+              i++;
+            }
+        }
+        return C;
+    }
+
+    /**
+     * Sums all columns into one
+     * 
+     * @return Matrix with only one column
+     */
+    public Matrix sumOverColumns() {
+        Matrix X = new Matrix(nRows, 1);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            int sum = 0;
+            for (int col = 0; col < nCols; col++) {
+                sum += A[row][col]; 
+            }
+            C[row][0] = sum;
+        }
+        return X;
+    }
+
+    /**
+     * Sums all rows into one
+     * 
+     * @return Matrix with only one row
+     */
+    public Matrix sumOverRows() {
+        Matrix X = new Matrix(1, nCols);
+        double[][] C = X.getArray();
+
+        for (int col = 0; col < nCols; col++) {
+            int sum = 0;
+            for (int row = 0; row < nRows; row++) {
+                sum += A[row][col]; 
+            }
+            C[0][col] = sum;
+        }
+        return X;
+    }
+
+    /**
+     * Broadcasts Matrix B in order to perform addition, only works for broadcasting columns
+     * 
+     * @param B Matrix
+     * @return C = A + B
+     */
+    public Matrix broadcastAddMatrix(Matrix B) {
+        if (this.nRows != B.nRows) {
+            throw new ArithmeticException("Dimensions must be the same");
+        }
+        if (this.nCols == B.nCols) {
+            return this.addMatrix(B);
+        }
+
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = A[row][col] + B.A[row][0];
+            }
+        }
+        return X;
+    }
+
+    /**
+     * Applies ReLu function on every entry in Matrix.
+     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * 
+     * @return ReLu(Matrix)
+     */
+    public Matrix applyReLu() {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[row][col] = A[row][col] <= 0 ? 0 : A[row][col];
+            }
+        }
+        return X;
+    }
+
+    /**
+     * Applies ReLu derivative function on every entry in Matrix.
+     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * 
+     * @return ReLu'(Matrix)
+     */
+    public Matrix applyDerivativeReLu(double leak) {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[row][col] = A[row][col] <= 0 ? leak : 1;
+            }
+        }
+        return X;
+    }
+
+    /**
+     * Applies Sigmoid function to given element.
+     * 
+     * @return sigmodi value
+     */
+    public double Sigmoid(double z) {
+        if (z >= 0)
+            return 1/(1.0 + Math.exp(-z));
+        else {
+            double e = Math.exp(z);
+            return e / (1.0+e);
+        }
+    }
+
+    /**
+     * Applies Sigmoid function on every entry in Matrix.
+     * 
+     * @return Sigmoid(Matrix)
+     */
+    public Matrix applySigmoid() {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = Sigmoid(A[row][col]);
+            }
+        }
+        return X;
+    }
+
+    /**
+     * Applies Sigmoid derivative function on every entry in Matrix.
+     * 
+     * @return Sigmoid'(Matrix)
+     */
+    public Matrix applyDerivativeSigmoid() {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        double sigmoid;
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+                sigmoid = Sigmoid(A[row][col]);
+                C[row][col] = sigmoid * (1.0-sigmoid);
+            }
+        }
+        return X;
+    }
+
+    /**
      * Static method to print Matrix
      * 
      * @param A Matrix
@@ -180,42 +371,4 @@ public class Matrix {
             System.out.println(Arrays.toString(C[i]));
         }
     }
-
-    // Static methods, don't know if they will be usefull 
-
-    // public static Matrix multiply(Matrix A, Matrix B) {
-    //     if (A.nCols != B.nRows) {
-    //         throw new ArithmeticException("Dimensions do not match: " + A.nCols + "!=" + B.nRows);
-    //     }
-
-    //     Matrix X = new Matrix(A.nRows, B.nCols);
-    //     double[][] C = X.getArray();
-
-    //     for (int row = 0; row < A.nRows; row++) {
-    //         for (int col = 0; col < B.nCols; col++) {
-    //             for (int i = 0; i < A.nCols; i++) {
-    //                 C[row][col] += A.A[row][i] * B.A[i][col];
-    //             }   
-    //         }
-    //     }
-    //     return X;
-    // }
-
-
-    // public static Matrix add(Matrix A, Matrix B) {
-    //     if (A.nRows != B.nRows || A.nCols != B.nCols) {
-    //         throw new ArithmeticException("Dimensions must be the same");
-    //     }
-
-    //     Matrix X = new Matrix(A.nRows, A.nCols);
-    //     double[][] C = X.getArray();
-
-    //     for (int row = 0; row < A.nRows; row++) {
-    //         for (int col = 0; col < A.nCols; col++) {
-    //             C[row][col] = A.A[row][col] + B.A[row][col];
-    //         }
-    //     }
-    //     return X;
-    // }
-
 }
