@@ -37,6 +37,10 @@ public class FullyConnectedLayer extends Layer {
         lastZ = weights.product(input).addMatrix(biases);
         lastX = lastZ.applyReLu();
 
+        // Matrix.printMatrix(lastX);
+        System.out.println("/////////////////////////////////////////////");
+        System.out.println(lastX.getnRows() + "|||" + lastX.getnCols());
+        System.out.println("/////////////////////////////////////////////");
         return lastX;
     }
 
@@ -81,11 +85,11 @@ public class FullyConnectedLayer extends Layer {
     public void setRandomWeights(){
         Random random = new Random(SEED);
 
-        double[][] init = new double[_inLength][_outLength];
+        double[][] init = new double[_outLength][_inLength];
         
         // 
         for(int i = 0; i < _outLength; i++) {
-            for(int j =0; j < _inLength; j++) {
+            for(int j = 0; j < _inLength; j++) {
                 init[i][j] = random.nextGaussian();
             }
         }

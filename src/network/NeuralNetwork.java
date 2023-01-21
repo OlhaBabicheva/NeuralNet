@@ -6,6 +6,7 @@ import Data.LabeledImage;
 import Data.Matrix;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -83,26 +84,39 @@ public class NeuralNetwork {
                 correct++;
             }
         }
-
         return((float)correct/images.size());
     }
 
-    public void train (List<LabeledImage> images) {
-        
-        for(LabeledImage img:images) {
-            
-            Matrix imData = img.getData().timesScalar(1.0/255);
-            Matrix imLabel = img.getLabelVector();        
+    public void train (LabeledImage[] miniBatch) {
+        double[][] inputBatch = new double[784][miniBatch.length];
+        double[][] labelBatch = new double[10][miniBatch.length];
+        double[] vector;
+        double[] label;
 
-            // Forward Pass
-            Matrix out = _layers.get(0).getOutput(imData);
+        for (int n = 0; n < miniBatch.length; n++) {
+            vector = miniBatch[n].getData().toVector();
+            label = miniBatch[n].getLabelVector().toVector();
 
-            // Cost derivative
-            Matrix deltaLast = costFunctionDerivative(out, imLabel);
+            for (int i = 0; i < 784; i++) {
+                inputBatch[i][n] = vector[i];
+            }
 
-            // Backprop
-            _layers.get((_layers.size()-1)).backPropagation(deltaLast);
+            for (int j = 0; j < 10; j++) {
+                labelBatch[j][n] = label[j];
+            }
         }
+
+        Matrix imData = new Matrix(inputBatch).timesScalar(1.0/255);
+        Matrix imLabel = new Matrix(labelBatch);
+
+        // Forward Pass
+        Matrix out = _layers.get(0).getOutput(imData);
+
+        // Cost derivative
+        Matrix deltaLast = costFunctionDerivative(out, imLabel);
+
+        // Backprop
+        _layers.get((_layers.size()-1)).backPropagation(deltaLast);
 
     }
 }

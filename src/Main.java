@@ -19,16 +19,16 @@ public class Main {
         // String path = sc.nextLine();
         // double[][] image = ImageConve2rter.convertImage(path);
 
-        int miniBatchSize = 5;
+        int miniBatchSize = 8;
         double learningRate = 1.5;
 
-        // List<Layer> layers = new ArrayList<>();
-        // FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, 2137, learningRate, miniBatchSize);
-        // layers.add(fcl1);
-        // FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, 2137, learningRate, miniBatchSize);
-        // layers.add(fcl2);
+        List<Layer> layers = new ArrayList<>();
+        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, 2137, learningRate, miniBatchSize);
+        layers.add(fcl1);
+        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, 2137, learningRate, miniBatchSize);
+        layers.add(fcl2);
 
-        // NeuralNetwork net = new NeuralNetwork(layers, 255);
+        NeuralNetwork net = new NeuralNetwork(layers, 255);
 
         String trainPath = "C:\\Users\\Mati\\Desktop\\mnist_train.csv";
         String testPath = "C:\\Users\\Mati\\Desktop\\mnist_test.csv";
@@ -50,10 +50,11 @@ public class Main {
                 miniBatches.add(images);
             }
 
-            
-            // net.train(imagesTrain);
+            for (LabeledImage[] miniBatch:miniBatches) {
+                net.train(miniBatch);
+            }
 
-            // rate = net.test(imagesTest);
+            rate = net.test(imagesTest);
 
             // System.out.println("Success rate after round " + i + ": " + rate);
         }

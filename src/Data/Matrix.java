@@ -191,6 +191,20 @@ public class Matrix {
         return X;
     }
 
+    public double[] toVector() {
+        int newRows = nRows * nCols;
+        double[] C = new double[newRows];
+
+        int i = 0;
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[i] = A[row][col];
+              i++;
+            }
+        }
+        return C;
+    }
+
     public Matrix applyReLu() {
         Matrix X = new Matrix(nRows, nCols);
         double[][] C = X.getArray();
