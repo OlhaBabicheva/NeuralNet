@@ -191,6 +191,30 @@ public class Matrix {
         return X;
     }
 
+    public Matrix applyReLu() {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[row][col] = A[row][col] <= 0 ? 0 : A[row][col];
+            }
+        }
+        return X;
+    }
+
+    public Matrix applyDerivativeReLu(double leak) {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+              C[row][col] = A[row][col] <= 0 ? leak : 1;
+            }
+        }
+        return X;
+    }
+
     /**
      * Static method to print Matrix
      * 

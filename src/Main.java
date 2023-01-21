@@ -18,8 +18,14 @@ public class Main {
         String d_path = "C:\\Users\\Mati\\Desktop\\mnist_test.csv";
         List<LabeledImage> images = new CsvReader().readCsv(d_path);
 
-        Matrix m = new Matrix(images.get(0).getData());
-        Matrix.printMatrix(m.timesScalar((double)1/255));
+        // Matrix m = new Matrix(images.get(0).getData());
+        // Matrix.printMatrix(m.timesScalar((double)1/255));
+
+        double[][] asd = images.get(0).getLabelVector().getArray();
+
+        for (int i = 0; i < asd.length; i++) {
+            System.out.println(Arrays.toString(asd[i]));
+        }
 
     }
 }
