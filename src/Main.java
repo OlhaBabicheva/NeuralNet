@@ -26,8 +26,11 @@ public class Main {
         NeuralNetwork net = new NeuralNetwork(layers, 255);
 
         // Type your paths for mnist dataset
-        String trainPath = "C:\\Users\\konra\\IdeaProjects\\NeuralNet\\Data\\mnist_train.csv";
-        String testPath = "C:\\Users\\konra\\IdeaProjects\\NeuralNet\\Data\\mnist_test.csv";
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Path to training dataset: ");
+        String trainPath = sc.nextLine();
+        System.out.print("Path to testing dataset: ");
+        String testPath = sc.nextLine();
 
         List<LabeledImage> imagesTrain = new CsvReader().readCsv(trainPath);
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
@@ -58,10 +61,11 @@ public class Main {
 
             System.out.println("Success rate after round " + (i+1) + ": " + String.format("%.4f", rate) + ", Average cost: " + String.format("%.4f", net.average));
         }
+        System.out.print("Path to image: ");
+        String path;
         while (true){
-            Scanner sc = new Scanner(System.in);
-            System.out.print("Path to image: ");
-            String path = sc.nextLine();
+            path = sc.nextLine();
+            if (Objects.equals(path, "quit")) break;
             Matrix image = new Matrix(ImageConverter.convertImage(path));
             image.printAsImage();
             System.out.println("Predicted: " + net.predict(image));
