@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ImageConverter {
@@ -14,9 +15,15 @@ public class ImageConverter {
         double[][] grayscale = new double[img_size][img_size];
         Scanner sc = new Scanner(System.in);
         File file = new File(path);
+        if (Objects.equals(path, "exit")){
+            System.exit(0);
+        }
         while(!file.exists()){
             System.out.print("Provide correct path to image: ");
             path = sc.nextLine();
+            if (Objects.equals(path, "exit")){
+                System.exit(0);
+            }
             file = new File(path);
         }
         try {

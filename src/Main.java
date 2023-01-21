@@ -6,11 +6,9 @@ import network.NeuralNetwork;
 import layers.FullyConnectedLayer;
 import layers.Layer;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
+
 import static java.util.Collections.shuffle;
-import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,7 +32,7 @@ public class Main {
         List<LabeledImage> imagesTrain = new CsvReader().readCsv(trainPath);
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
         
-        int epochs = 5;
+        int epochs = 20;
         float rate = 0;
         
         for(int i = 0; i < epochs; i++){
@@ -47,16 +45,26 @@ public class Main {
                 LabeledImage[] images = imagesTrain.subList(k, k + miniBatchSize).toArray(new LabeledImage[0]);
                 miniBatches.add(images);
             }
-
-            System.out.println("Training!!!");
+            float m = 0;
             for (LabeledImage[] miniBatch:miniBatches) {
+                float percent = m/miniBatches.size()*100;
+                System.out.print("Round " + (i+1) + ": " + Math.round(percent) + "%  [" + "#".repeat(Math.round(percent/10)) + " ".repeat(10 - Math.round(percent/10)) + "]\r");
                 net.train(miniBatch);
+                m++;
             }
 
             // Checking network accuracy
             rate = net.test(imagesTest);
 
-            System.out.println("Success rate after round " + i + ": " + rate);
+            System.out.println("Success rate after round " + (i+1) + ": " + String.format("%.4f", rate) + ", Average cost: " + String.format("%.4f", net.average));
+        }
+        while (true){
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Path to image: ");
+            String path = sc.nextLine();
+            Matrix image = new Matrix(ImageConverter.convertImage(path));
+            image.printAsImage();
+            System.out.println("Predicted: " + net.predict(image));
         }
     }
 }
