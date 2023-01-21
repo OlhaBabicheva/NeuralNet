@@ -21,6 +21,10 @@ public class NeuralNetwork {
         linkLayers();
     }
 
+    public List<Layer> getLayers() {
+        return _layers;
+    }
+
     private void linkLayers() {
         if (_layers.size() <= 1) {
             return;
@@ -79,7 +83,6 @@ public class NeuralNetwork {
         Matrix imData = new Matrix(data);
 
         Matrix out = _layers.get(0).getOutput(imData);
-
         return getMaxIndex(out);
     }
 

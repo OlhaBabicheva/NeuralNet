@@ -19,13 +19,13 @@ public class Main {
         // String path = sc.nextLine();
         // double[][] image = ImageConve2rter.convertImage(path);
 
-        int miniBatchSize = 8;
-        double learningRate = 3.0;
+        int miniBatchSize = 16;
+        double learningRate = 0.5;
 
         List<Layer> layers = new ArrayList<>();
-        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, 2138, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, 513223, learningRate, miniBatchSize);
         layers.add(fcl1);
-        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, 2138, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, 513223, learningRate, miniBatchSize);
         layers.add(fcl2);
 
         NeuralNetwork net = new NeuralNetwork(layers, 255);
@@ -59,5 +59,9 @@ public class Main {
 
             System.out.println("Success rate after round " + i + ": " + rate);
         }
+
+        List<Layer> asd = net.getLayers();
+        // Matrix.printMatrix(asd.get(1).getweight());
+
     }
 }

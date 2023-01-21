@@ -244,8 +244,6 @@ public class Matrix {
         return X;
     }
 
-
-
     public Matrix applyReLu() {
         Matrix X = new Matrix(nRows, nCols);
         double[][] C = X.getArray();
@@ -265,6 +263,41 @@ public class Matrix {
         for (int row = 0; row < nRows; row++) {
             for (int col = 0; col < nCols; col++) {
               C[row][col] = A[row][col] <= 0 ? leak : 1;
+            }
+        }
+        return X;
+    }
+
+    public double Sigmoid(double z) {
+        if (z >= 0)
+            return 1/(1.0 + Math.exp(-z));
+        else {
+            double e = Math.exp(z);
+            return e / (1.0+e);
+        }
+    }
+
+    public Matrix applySigmoid() {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = Sigmoid(A[row][col]);
+            }
+        }
+        return X;
+    }
+
+    public Matrix applyDerivativeSigmoid() {
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        double sigmoid;
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+                sigmoid = Sigmoid(A[row][col]);
+                C[row][col] = sigmoid * (1.0-sigmoid);
             }
         }
         return X;

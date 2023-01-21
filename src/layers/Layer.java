@@ -17,11 +17,13 @@ public abstract class Layer {
     protected Matrix weights;
     protected Matrix biases;
 
+    protected Matrix dataX;
     protected Matrix lastX;
     protected Matrix lastZ;
 
     public abstract Matrix getOutput(Matrix input);
     public abstract void backPropagation(Matrix dLdO);
+    public abstract Matrix getweight();
 
     public double[] matrixToVector(List<double[][]> input){
         int length = input.size();

@@ -15,8 +15,9 @@ public class FullyConnectedLayer extends Layer {
     private int _outLength;
     private double _learningRate;
 
-    protected Matrix dataX;
-
+    public Matrix getweight() {
+        return weights;
+    }
 
     public FullyConnectedLayer(int _inLength, int _outLength, long SEED, double learningRate, int miniBatchSize) {
         this._inLength = _inLength;
@@ -24,7 +25,6 @@ public class FullyConnectedLayer extends Layer {
         this.SEED = SEED;
         this._learningRate = learningRate;
         this.miniBatchSize = miniBatchSize;
-
 
         setRandomBiases();
         setRandomWeights();
@@ -35,7 +35,7 @@ public class FullyConnectedLayer extends Layer {
             this.dataX = input;   
 
         this.lastZ = weights.product(input).broadcastAddMatrix(biases);
-        this.lastX = this.lastZ.applyReLu();
+        this.lastX = this.lastZ.applySigmoid();
 
         return this.lastX;
     }
@@ -58,12 +58,12 @@ public class FullyConnectedLayer extends Layer {
 
         // If it's the last layer
         if (_nextLayer == null) {
-            error = error.productHadamard(lastZ.applyDerivativeReLu(leak));
+            error = error.productHadamard(lastZ.applyDerivativeSigmoid());
             nablaBiases = error;
             nablaWeights = error.product(_previousLayer.lastX.transpose());
         }
         else {
-            error = _nextLayer.weights.transpose().product(error).productHadamard(lastZ.applyDerivativeReLu(leak));
+            error = _nextLayer.weights.transpose().product(error).productHadamard(lastZ.applyDerivativeSigmoid());
             nablaBiases = error;
 
             if (_previousLayer == null)
@@ -71,7 +71,6 @@ public class FullyConnectedLayer extends Layer {
             else
                 nablaWeights = error.product(_previousLayer.lastX.transpose());
         }
-
 
         this.biases = this.biases.minusMatrix(nablaBiases.sumOverColumns().timesScalar(_learningRate/miniBatchSize));
         this.weights = this.weights.minusMatrix(nablaWeights.timesScalar(_learningRate/miniBatchSize));
@@ -83,13 +82,15 @@ public class FullyConnectedLayer extends Layer {
     }
 
     public void setRandomWeights(){
+
+        double limit = Math.sqrt(6.0/(_inLength+_outLength));
         Random random = new Random(SEED);
 
         double[][] init = new double[_outLength][_inLength];
         
         for(int i = 0; i < _outLength; i++) {
             for(int j = 0; j < _inLength; j++) {
-                init[i][j] = random.nextGaussian();
+                init[i][j] = random.nextDouble(-limit, limit);
             }
         }
         this.weights = new Matrix(init);
@@ -101,7 +102,7 @@ public class FullyConnectedLayer extends Layer {
         double[][] init = new double[_outLength][1];
         
         for(int i = 0; i < _outLength; i++) {
-            init[i][0] = random.nextGaussian();
+            init[i][0] = 0;
         }
         this.biases = new Matrix(init);
     }
