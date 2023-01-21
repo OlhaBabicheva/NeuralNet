@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         final long SEED = 513224;
-        int miniBatchSize = 4;
+        int miniBatchSize = 8;
         double learningRate = 0.5;
 
         // Temporary network creation

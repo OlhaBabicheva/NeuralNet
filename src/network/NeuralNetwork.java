@@ -51,7 +51,18 @@ public class NeuralNetwork {
      */
     public Matrix costFunction(Matrix networkOutput, Matrix correctAnswer) {
         Matrix inside = correctAnswer.minusMatrix(networkOutput);
-        return inside.productHadamard(inside).sumOverRows();
+        Matrix loss = inside.productHadamard(inside).sumOverRows();
+
+        double[][] res_arr = loss.getArray();
+        double err = 0.0;
+        for(int i = 0; i < loss.getnRows(); ++i){
+            for(int j = 0; j < loss.getnCols(); ++j){
+                err += res_arr[i][j];
+            }
+        }
+        System.out.print("Cost: " + err/8 + "\r");
+
+        return loss;
     }
 
     /**
@@ -68,7 +79,7 @@ public class NeuralNetwork {
                 err += Math.abs(res_arr[i][j]);
             }
         }
-        System.out.print("Cost: " + err + "\r");
+        // System.out.print("Cost: " + err + "\r");
         return result;
     }
 
@@ -188,7 +199,7 @@ public class NeuralNetwork {
 
         // Value of loss function
         Matrix lossValue = costFunction(out, imLabel);
-        Matrix.printMatrix(lossValue);
+        // Matrix.printMatrix(lossValue);
 
         // Backprop
         _layers.get((_layers.size()-1)).backPropagation(deltaLast);
