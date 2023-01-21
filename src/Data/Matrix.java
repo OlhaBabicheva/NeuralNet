@@ -191,6 +191,11 @@ public class Matrix {
         return X;
     }
 
+    /**
+     * Converts Matrix to one dimensional vector
+     * 
+     * @return flattened Matrix
+     */
     public double[] toVector() {
         int newRows = nRows * nCols;
         double[] C = new double[newRows];
@@ -205,6 +210,11 @@ public class Matrix {
         return C;
     }
 
+    /**
+     * Sums all columns into one
+     * 
+     * @return Matrix with only one column
+     */
     public Matrix sumOverColumns() {
         Matrix X = new Matrix(nRows, 1);
         double[][] C = X.getArray();
@@ -219,6 +229,11 @@ public class Matrix {
         return X;
     }
 
+    /**
+     * Sums all rows into one
+     * 
+     * @return Matrix with only one row
+     */
     public Matrix sumOverRows() {
         Matrix X = new Matrix(1, nCols);
         double[][] C = X.getArray();
@@ -258,6 +273,12 @@ public class Matrix {
         return X;
     }
 
+    /**
+     * Applies ReLu function on every entry in Matrix.
+     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * 
+     * @return ReLu(Matrix)
+     */
     public Matrix applyReLu() {
         Matrix X = new Matrix(nRows, nCols);
         double[][] C = X.getArray();
@@ -270,6 +291,12 @@ public class Matrix {
         return X;
     }
 
+    /**
+     * Applies ReLu derivative function on every entry in Matrix.
+     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * 
+     * @return ReLu'(Matrix)
+     */
     public Matrix applyDerivativeReLu(double leak) {
         Matrix X = new Matrix(nRows, nCols);
         double[][] C = X.getArray();
@@ -282,6 +309,11 @@ public class Matrix {
         return X;
     }
 
+    /**
+     * Applies Sigmoid function to given element.
+     * 
+     * @return sigmodi value
+     */
     public double Sigmoid(double z) {
         if (z >= 0)
             return 1/(1.0 + Math.exp(-z));
@@ -291,6 +323,11 @@ public class Matrix {
         }
     }
 
+    /**
+     * Applies Sigmoid function on every entry in Matrix.
+     * 
+     * @return Sigmoid(Matrix)
+     */
     public Matrix applySigmoid() {
         Matrix X = new Matrix(nRows, nCols);
         double[][] C = X.getArray();
@@ -303,6 +340,11 @@ public class Matrix {
         return X;
     }
 
+    /**
+     * Applies Sigmoid derivative function on every entry in Matrix.
+     * 
+     * @return Sigmoid'(Matrix)
+     */
     public Matrix applyDerivativeSigmoid() {
         Matrix X = new Matrix(nRows, nCols);
         double[][] C = X.getArray();

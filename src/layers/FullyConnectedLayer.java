@@ -15,9 +15,6 @@ public class FullyConnectedLayer extends Layer {
     private int _outLength;
     private double _learningRate;
 
-    public Matrix getweight() {
-        return weights;
-    }
 
     public FullyConnectedLayer(int _inLength, int _outLength, long SEED, double learningRate, int miniBatchSize) {
         this._inLength = _inLength;
@@ -30,7 +27,16 @@ public class FullyConnectedLayer extends Layer {
         setRandomWeights();
     }
 
+    /**
+     * Multiplies inputs by weights, adds bias vector, applies activation function. Keeps activation
+     * and activation before function in order to perform backpropagation later on. 
+     * 
+     * @return Matrix of layer activation
+     */
     public Matrix fullyConnectedForwardPass(Matrix input) {
+        // Would be lovely if there was a way to choose activation function, 
+        // but first there needs to be more than one working activation function...
+        
         if (_previousLayer == null)
             this.dataX = input;   
 
@@ -40,7 +46,11 @@ public class FullyConnectedLayer extends Layer {
         return this.lastX;
     }
 
-    @Override
+    /**
+     * Computes output of layer and forwards it to next layers if there are any.
+     * 
+     * @return Matrix of layer activation
+     */
     public Matrix getOutput(Matrix input) {
         Matrix forwardPass = fullyConnectedForwardPass(input);
 
@@ -51,7 +61,10 @@ public class FullyConnectedLayer extends Layer {
         
     }
 
-    @Override
+    /**
+     * Implements backpropagation algorithm. It uses fully Matrix based approach, so it takes as input a Matrix
+     * of 784xMiniBatchSize and thus propagates forwards and backwards efficently.
+     */
     public void backPropagation(Matrix error) {
         Matrix nablaBiases;
         Matrix nablaWeights;
@@ -65,7 +78,7 @@ public class FullyConnectedLayer extends Layer {
         else {
             error = _nextLayer.weights.transpose().product(error).productHadamard(lastZ.applyDerivativeSigmoid());
             nablaBiases = error;
-
+            // If it's the first layer we take network inputs
             if (_previousLayer == null)
                 nablaWeights = error.product(dataX.transpose());
             else
@@ -80,22 +93,28 @@ public class FullyConnectedLayer extends Layer {
             _previousLayer.backPropagation(error);
         } 
     }
-
+    /**
+     * Randomly initializes weights from normal distribiution
+     */
     public void setRandomWeights(){
+        // TO DO: IMPLEMENT ANOTHER METHODs TO RANDOMIZE NOT FROM 
+        // NORMAL DISTRIBUTION BUT FROM GLOROT/XAVIER OR LECUN OR HE
 
-        double limit = Math.sqrt(6.0/(_inLength+_outLength));
         Random random = new Random(SEED);
 
         double[][] init = new double[_outLength][_inLength];
         
         for(int i = 0; i < _outLength; i++) {
             for(int j = 0; j < _inLength; j++) {
-                init[i][j] = random.nextDouble(-limit, limit);
+                init[i][j] = random.nextGaussian();
             }
         }
         this.weights = new Matrix(init);
     }
 
+    /**
+     * Initializes Biases with random values, currently with zeroes, because why not
+     */
     public void setRandomBiases(){
         Random random = new Random(SEED);
 

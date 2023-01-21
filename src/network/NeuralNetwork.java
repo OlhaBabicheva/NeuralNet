@@ -20,10 +20,10 @@ public class NeuralNetwork {
         linkLayers();
     }
 
-    public List<Layer> getLayers() {
-        return _layers;
-    }
-
+    /**
+     * Goes through all layers and connects them to each other.
+     * 
+     */
     private void linkLayers() {
         if (_layers.size() <= 1) {
             return;
@@ -44,15 +44,30 @@ public class NeuralNetwork {
         }
     }
 
+    /**
+     * Computes cost function value and returns Matrix of dimensions 1xMiniBatchSize
+     * 
+     * @return Matrix sum(y - a)^2
+     */
     public Matrix costFunction(Matrix networkOutput, Matrix correctAnswer) {
         Matrix inside = correctAnswer.minusMatrix(networkOutput);
         return inside.productHadamard(inside).sumOverRows();
     }
 
+    /**
+     * Computes cost function derivative
+     * 
+     * @return Matrix (a - y)
+     */
     public Matrix costFunctionDerivative(Matrix networkOutput, Matrix correctAnswer) {
         return networkOutput.minusMatrix(correctAnswer);
     }
 
+    /**
+     * Finds index where, output is the highest
+     * 
+     * @return location of max
+     */
     private int getMaxIndex(Matrix in) {
         double[][] array = in.getArray();
         double max = 0;
@@ -69,6 +84,12 @@ public class NeuralNetwork {
         return index;
     }
 
+    /**
+     * Converts image to a nice Matrix 784x1 then gives this image to network
+     * and uses getMaxIndex to find highest activation, ie. network prediction
+     * 
+     * @return location of max
+     */
     public int guess(LabeledImage image) {
 
         double[][] data = new double[784][1];
@@ -86,6 +107,11 @@ public class NeuralNetwork {
         return getMaxIndex(out);
     }
 
+    /**
+     * Takes test images and computes our network accuracy
+     * 
+     * @return precision
+     */
     public float test (List<LabeledImage> images) {
         int correct = 0;
 
@@ -99,7 +125,16 @@ public class NeuralNetwork {
         return ((float)correct/images.size());
     }
 
+    /**
+     * Converts LabeledImages batch to Matrix 784xMiniBatchSize, basically flattens every Image data
+     * and puts in into a single column. So that we can input them into network. Does the same for image Labels.
+     * Then scales down every pixel data to a number between (0, 1), and performs backpropagation. 
+     */
     public void train (LabeledImage[] miniBatch) {
+        // TODO: little bit of refactoring, maybe take this image preprocessing stuff and make it into a method,
+        // Additionally we need nice printing like in Tensorflow, use Cariage Return for this to overwrite
+        // current line when printing stuff, yeah and make nice printing, some progress bar maybe.
+
         double[][] inputBatch = new double[784][miniBatch.length];
         double[][] labelBatch = new double[10][miniBatch.length];
         double[] vector;
