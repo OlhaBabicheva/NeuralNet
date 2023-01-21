@@ -143,9 +143,9 @@ public class Matrix {
         double[][] C = X.getArray();
 
         for (int row = 0; row < nRows; row++) {
-          for (int col = 0; col < nCols; col++) {
-            C[row][col] = A[row][col] + B.A[row][col];
-          }
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = A[row][col] + B.A[row][col];
+            }
         }
         return X;
     }
@@ -154,7 +154,7 @@ public class Matrix {
      * Matrix subtraction C = A - B
      * 
      * @param B Matrix
-     * @return Matrix addition A - B
+     * @return Matrix subtraction A - B
      * @throws ArithmeticException Matrix dimensions do not match
      */
     public Matrix minusMatrix(Matrix B) {
@@ -166,9 +166,9 @@ public class Matrix {
         double[][] C = X.getArray();
 
         for (int row = 0; row < nRows; row++) {
-          for (int col = 0; col < nCols; col++) {
-            C[row][col] = A[row][col] - B.A[row][col];
-          }
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = A[row][col] - B.A[row][col];
+            }
         }
         return X;
     }
@@ -204,6 +204,47 @@ public class Matrix {
         }
         return C;
     }
+
+    public Matrix sumOverColumns() {
+        Matrix X = new Matrix(nRows, 1);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            int sum = 0;
+            for (int col = 0; col < nCols; col++) {
+                sum += A[row][col]; 
+            }
+            C[row][0] = sum;
+        }
+        return X;
+    }
+
+    /**
+     * Broadcasts Matrix B in order to perform addition, only works for broadcasting columns
+     * 
+     * @param B Matrix
+     * @return C = A + B
+     */
+    public Matrix broadcastAddMatrix(Matrix B) {
+        if (this.nRows != B.nRows) {
+            throw new ArithmeticException("Dimensions must be the same");
+        }
+        if (this.nCols == B.nCols) {
+            return this.addMatrix(B);
+        }
+
+        Matrix X = new Matrix(nRows, nCols);
+        double[][] C = X.getArray();
+
+        for (int row = 0; row < nRows; row++) {
+            for (int col = 0; col < nCols; col++) {
+                C[row][col] = A[row][col] + B.A[row][0];
+            }
+        }
+        return X;
+    }
+
+
 
     public Matrix applyReLu() {
         Matrix X = new Matrix(nRows, nCols);
@@ -241,42 +282,4 @@ public class Matrix {
             System.out.println(Arrays.toString(C[i]));
         }
     }
-
-    // Static methods, don't know if they will be usefull 
-
-    // public static Matrix multiply(Matrix A, Matrix B) {
-    //     if (A.nCols != B.nRows) {
-    //         throw new ArithmeticException("Dimensions do not match: " + A.nCols + "!=" + B.nRows);
-    //     }
-
-    //     Matrix X = new Matrix(A.nRows, B.nCols);
-    //     double[][] C = X.getArray();
-
-    //     for (int row = 0; row < A.nRows; row++) {
-    //         for (int col = 0; col < B.nCols; col++) {
-    //             for (int i = 0; i < A.nCols; i++) {
-    //                 C[row][col] += A.A[row][i] * B.A[i][col];
-    //             }   
-    //         }
-    //     }
-    //     return X;
-    // }
-
-
-    // public static Matrix add(Matrix A, Matrix B) {
-    //     if (A.nRows != B.nRows || A.nCols != B.nCols) {
-    //         throw new ArithmeticException("Dimensions must be the same");
-    //     }
-
-    //     Matrix X = new Matrix(A.nRows, A.nCols);
-    //     double[][] C = X.getArray();
-
-    //     for (int row = 0; row < A.nRows; row++) {
-    //         for (int col = 0; col < A.nCols; col++) {
-    //             C[row][col] = A.A[row][col] + B.A[row][col];
-    //         }
-    //     }
-    //     return X;
-    // }
-
 }

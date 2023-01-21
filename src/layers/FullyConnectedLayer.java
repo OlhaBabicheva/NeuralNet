@@ -9,8 +9,6 @@ public class FullyConnectedLayer extends Layer {
     private long SEED;
     private final double leak = 0.01;
 
-    private Matrix weights;
-    private Matrix biases;
     private int miniBatchSize;
 
     private int _inLength;
@@ -27,21 +25,18 @@ public class FullyConnectedLayer extends Layer {
         this._learningRate = learningRate;
         this.miniBatchSize = miniBatchSize;
 
-        this.biases = new Matrix(_outLength, miniBatchSize);
+
+        setRandomBiases();
         setRandomWeights();
     }
 
     public Matrix fullyConnectedForwardPass(Matrix input) {
         if (_previousLayer == null)
-            this.dataX = input;
+            this.dataX = input;   
 
-        this.lastZ = weights.product(input).addMatrix(biases);
+        this.lastZ = weights.product(input).broadcastAddMatrix(biases);
         this.lastX = this.lastZ.applyReLu();
 
-        // Matrix.printMatrix(lastX);
-        System.out.println("/////////////////////////////////////////////");
-        System.out.println(lastX.getnRows() + "|||" + lastX.getnCols());
-        System.out.println("/////////////////////////////////////////////");
         return this.lastX;
     }
 
@@ -65,29 +60,26 @@ public class FullyConnectedLayer extends Layer {
         if (_nextLayer == null) {
             error = error.productHadamard(lastZ.applyDerivativeReLu(leak));
             nablaBiases = error;
-            nablaWeights = _previousLayer.lastX.product(error.transpose());
+            nablaWeights = error.product(_previousLayer.lastX.transpose());
         }
         else {
-            error = weights.transpose().product(error).productHadamard(lastZ.applyDerivativeReLu(leak));
+            error = _nextLayer.weights.transpose().product(error).productHadamard(lastZ.applyDerivativeReLu(leak));
             nablaBiases = error;
 
             if (_previousLayer == null)
-                nablaWeights = dataX.product(error);
+                nablaWeights = error.product(dataX.transpose());
             else
-                nablaWeights = _previousLayer.lastX.product(error.transpose());
+                nablaWeights = error.product(_previousLayer.lastX.transpose());
         }
-        System.out.println(nablaWeights.getnRows() + "|||" + nablaWeights.getnCols());
 
-        System.out.println(weights.getnRows() + "|||" + weights.getnCols());
 
-        this.biases = this.biases.minusMatrix(nablaBiases.timesScalar(_learningRate/miniBatchSize));
+        this.biases = this.biases.minusMatrix(nablaBiases.sumOverColumns().timesScalar(_learningRate/miniBatchSize));
         this.weights = this.weights.minusMatrix(nablaWeights.timesScalar(_learningRate/miniBatchSize));
 
 
         if (_previousLayer != null) {
             _previousLayer.backPropagation(error);
-        }
-        
+        } 
     }
 
     public void setRandomWeights(){
@@ -95,12 +87,22 @@ public class FullyConnectedLayer extends Layer {
 
         double[][] init = new double[_outLength][_inLength];
         
-        // 
         for(int i = 0; i < _outLength; i++) {
             for(int j = 0; j < _inLength; j++) {
                 init[i][j] = random.nextGaussian();
             }
         }
         this.weights = new Matrix(init);
+    }
+
+    public void setRandomBiases(){
+        Random random = new Random(SEED);
+
+        double[][] init = new double[_outLength][1];
+        
+        for(int i = 0; i < _outLength; i++) {
+            init[i][0] = random.nextGaussian();
+        }
+        this.biases = new Matrix(init);
     }
 }

@@ -66,12 +66,21 @@ public class NeuralNetwork {
     }
 
     public int guess(LabeledImage image) {
-        Matrix imData = image.getData().timesScalar(1.0/255);
+
+        double[][] data = new double[784][1];
+        double[] vector;
+
+        vector = image.getData().timesScalar(1.0/255).toVector();
+
+            for (int i = 0; i < 784; i++) {
+                data[i][0] = vector[i];
+            }
+
+        Matrix imData = new Matrix(data);
 
         Matrix out = _layers.get(0).getOutput(imData);
-        int guess = getMaxIndex(out);
 
-        return guess;
+        return getMaxIndex(out);
     }
 
     public float test (List<LabeledImage> images) {

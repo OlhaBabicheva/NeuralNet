@@ -20,12 +20,12 @@ public class Main {
         // double[][] image = ImageConve2rter.convertImage(path);
 
         int miniBatchSize = 8;
-        double learningRate = 1.5;
+        double learningRate = 3.0;
 
         List<Layer> layers = new ArrayList<>();
-        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, 2137, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, 2138, learningRate, miniBatchSize);
         layers.add(fcl1);
-        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, 2137, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, 2138, learningRate, miniBatchSize);
         layers.add(fcl2);
 
         NeuralNetwork net = new NeuralNetwork(layers, 255);
@@ -37,11 +37,11 @@ public class Main {
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
         
         float rate = 0;
-        int epochs = 1;
+        int epochs = 5;
 
         for(int i = 0; i < epochs; i++){
-            shuffle(imagesTest);
             shuffle(imagesTrain);
+            shuffle(imagesTest);
 
             List<LabeledImage[]> miniBatches = new ArrayList<>();
 
@@ -50,13 +50,14 @@ public class Main {
                 miniBatches.add(images);
             }
 
+            System.out.println("Training!!!");
             for (LabeledImage[] miniBatch:miniBatches) {
                 net.train(miniBatch);
             }
 
             rate = net.test(imagesTest);
 
-            // System.out.println("Success rate after round " + i + ": " + rate);
+            System.out.println("Success rate after round " + i + ": " + rate);
         }
     }
 }
