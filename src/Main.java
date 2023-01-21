@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         final long SEED = 513224;
-        int miniBatchSize = 8;
-        double learningRate = 0.5;
+        int miniBatchSize = 4;
+        double learningRate = 0.6;
 
         // Temporary network creation
         List<Layer> layers = new ArrayList<>();
@@ -30,7 +30,7 @@ public class Main {
         // Type your paths for mnist dataset
         String trainPath = "C:\\Users\\Mati\\Desktop\\mnist_train.csv";
         String testPath = "C:\\Users\\Mati\\Desktop\\mnist_test.csv";
-
+        
         List<LabeledImage> imagesTrain = new CsvReader().readCsv(trainPath);
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
         
@@ -57,15 +57,6 @@ public class Main {
             rate = net.test(imagesTest);
 
             System.out.println("Success rate after round " + i + ": " + rate);
-
-            // Need to implement displaying current value of loss function to show how it goes down
         }
-
-        // Scanner sc = new Scanner(System.in);
-        // System.out.print("Path to image: ");
-        // String path = sc.nextLine();
-        // Matrix image = new Matrix(ImageConverter.convertImage(path));
-        // image.printAsImage();
-        // System.out.println("Predicted: " + net.predict(image));
     }
 }
