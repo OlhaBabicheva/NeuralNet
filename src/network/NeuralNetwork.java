@@ -13,6 +13,7 @@ public class NeuralNetwork {
 
     List<Layer> _layers;
     double scaleFactor;
+    public double average;
 
     public NeuralNetwork(List<Layer> _layers, double scaleFactor) {
         this._layers = _layers;
@@ -62,13 +63,15 @@ public class NeuralNetwork {
     public Matrix costFunctionDerivative(Matrix networkOutput, Matrix correctAnswer) {
         Matrix result = networkOutput.minusMatrix(correctAnswer);
         double[][] res_arr = result.getArray();
-        double err = 0.0;
+        List<Double> err = new ArrayList<>();
         for(int i = 0; i < result.getnRows(); ++i){
             for(int j = 0; j < result.getnCols(); ++j){
-                err += Math.abs(res_arr[i][j]);
+                err.add(Math.abs(res_arr[i][j]));
             }
         }
-        System.out.print("Cost: " + err + "\r");
+        Double[] Cost = new Double[err.size()];
+        err.toArray(Cost);
+        average = err.stream().mapToDouble(val -> val).average().orElse(0.0);
         return result;
     }
 
