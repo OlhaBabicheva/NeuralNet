@@ -275,7 +275,8 @@ public class Matrix {
 
     /**
      * Applies ReLu function on every entry in Matrix.
-     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * DO NOT USE NUMERICALLY UNSTABLE!!!
+     * WORK IN PROGRESS
      * 
      * @return ReLu(Matrix)
      */
@@ -293,7 +294,8 @@ public class Matrix {
 
     /**
      * Applies ReLu derivative function on every entry in Matrix.
-     * CHECK IF ITS NUMERICALLY STABLE!!!
+     * DO NOT USE NUMERICALLY UNSTABLE!!!
+     * WORK IN PROGRESS
      * 
      * @return ReLu'(Matrix)
      */
@@ -312,7 +314,7 @@ public class Matrix {
     /**
      * Applies Sigmoid function to given element.
      * 
-     * @return sigmodi value
+     * @return sigmoid value
      */
     public double Sigmoid(double z) {
         if (z >= 0)

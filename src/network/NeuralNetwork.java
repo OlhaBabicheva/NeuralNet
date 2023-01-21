@@ -51,7 +51,8 @@ public class NeuralNetwork {
      */
     public Matrix costFunction(Matrix networkOutput, Matrix correctAnswer) {
         Matrix inside = correctAnswer.minusMatrix(networkOutput);
-        return inside.productHadamard(inside).sumOverRows();
+        System.out.println("//////////////");
+        return inside.productHadamard(inside);
     }
 
     /**
@@ -164,6 +165,7 @@ public class NeuralNetwork {
 
         // Value of loss function
         Matrix lossValue = costFunction(out, imLabel);
+        Matrix.printMatrix(lossValue);
 
         // Backprop
         _layers.get((_layers.size()-1)).backPropagation(deltaLast);

@@ -43,6 +43,8 @@ public class FullyConnectedLayer extends Layer {
         this.lastZ = weights.product(input).broadcastAddMatrix(biases);
         this.lastX = this.lastZ.applySigmoid();
 
+        // Matrix.printMatrix(lastX);
+        // System.out.println("/////////////////");
         return this.lastX;
     }
 
