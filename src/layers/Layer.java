@@ -14,6 +14,9 @@ public abstract class Layer {
     protected Layer _nextLayer;
     protected Layer _previousLayer;
 
+    protected Matrix lastX;
+    protected Matrix lastZ;
+
     public abstract Matrix getOutput(Matrix input);
     public abstract void backPropagation(Matrix dLdO);
 

@@ -17,8 +17,7 @@ public class FullyConnectedLayer extends Layer {
     private int _outLength;
     private double _learningRate;
 
-    private Matrix lastZ;
-    private Matrix lastX;
+    protected Matrix dataX;
 
 
     public FullyConnectedLayer(int _inLength, int _outLength, long SEED, double learningRate, int miniBatchSize) {
@@ -33,15 +32,17 @@ public class FullyConnectedLayer extends Layer {
     }
 
     public Matrix fullyConnectedForwardPass(Matrix input) {
+        if (_previousLayer == null)
+            this.dataX = input;
 
-        lastZ = weights.product(input).addMatrix(biases);
-        lastX = lastZ.applyReLu();
+        this.lastZ = weights.product(input).addMatrix(biases);
+        this.lastX = this.lastZ.applyReLu();
 
         // Matrix.printMatrix(lastX);
         System.out.println("/////////////////////////////////////////////");
         System.out.println(lastX.getnRows() + "|||" + lastX.getnCols());
         System.out.println("/////////////////////////////////////////////");
-        return lastX;
+        return this.lastX;
     }
 
     @Override
@@ -64,13 +65,20 @@ public class FullyConnectedLayer extends Layer {
         if (_nextLayer == null) {
             error = error.productHadamard(lastZ.applyDerivativeReLu(leak));
             nablaBiases = error;
-            nablaWeights = error.product(lastX);
+            nablaWeights = _previousLayer.lastX.product(error.transpose());
         }
         else {
-            error = weights.transpose().product(error).productHadamard(lastX.applyDerivativeReLu(leak));
+            error = weights.transpose().product(error).productHadamard(lastZ.applyDerivativeReLu(leak));
             nablaBiases = error;
-            nablaWeights = error.product(lastX);
+
+            if (_previousLayer == null)
+                nablaWeights = dataX.product(error);
+            else
+                nablaWeights = _previousLayer.lastX.product(error.transpose());
         }
+        System.out.println(nablaWeights.getnRows() + "|||" + nablaWeights.getnCols());
+
+        System.out.println(weights.getnRows() + "|||" + weights.getnCols());
 
         this.biases = this.biases.minusMatrix(nablaBiases.timesScalar(_learningRate/miniBatchSize));
         this.weights = this.weights.minusMatrix(nablaWeights.timesScalar(_learningRate/miniBatchSize));
@@ -95,13 +103,4 @@ public class FullyConnectedLayer extends Layer {
         }
         this.weights = new Matrix(init);
     }
-
-    public void ReLu(Matrix A) {
-        A.applyReLu();
-    }
-
-    public void derivativeReLu(Matrix A) {
-        A.applyDerivativeReLu(leak);
-    }
-    
 }
