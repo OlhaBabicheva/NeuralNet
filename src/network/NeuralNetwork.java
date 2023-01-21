@@ -1,4 +1,3 @@
-
 package network;
 
 import layers.Layer;
@@ -46,11 +45,12 @@ public class NeuralNetwork {
     }
 
     public Matrix costFunction(Matrix networkOutput, Matrix correctAnswer) {
-        return networkOutput.minusMatrix(correctAnswer);
+        Matrix inside = correctAnswer.minusMatrix(networkOutput);
+        return inside.productHadamard(inside).sumOverRows();
     }
 
     public Matrix costFunctionDerivative(Matrix networkOutput, Matrix correctAnswer) {
-        return correctAnswer.minusMatrix(networkOutput);
+        return networkOutput.minusMatrix(correctAnswer);
     }
 
     private int getMaxIndex(Matrix in) {
@@ -96,7 +96,7 @@ public class NeuralNetwork {
                 correct++;
             }
         }
-        return((float)correct/images.size());
+        return ((float)correct/images.size());
     }
 
     public void train (LabeledImage[] miniBatch) {
@@ -126,6 +126,9 @@ public class NeuralNetwork {
 
         // Cost derivative
         Matrix deltaLast = costFunctionDerivative(out, imLabel);
+
+        // Value of loss function
+        Matrix lossValue = costFunction(out, imLabel);
 
         // Backprop
         _layers.get((_layers.size()-1)).backPropagation(deltaLast);

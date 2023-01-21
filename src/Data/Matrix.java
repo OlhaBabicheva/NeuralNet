@@ -219,6 +219,20 @@ public class Matrix {
         return X;
     }
 
+    public Matrix sumOverRows() {
+        Matrix X = new Matrix(1, nCols);
+        double[][] C = X.getArray();
+
+        for (int col = 0; col < nCols; col++) {
+            int sum = 0;
+            for (int row = 0; row < nRows; row++) {
+                sum += A[row][col]; 
+            }
+            C[0][col] = sum;
+        }
+        return X;
+    }
+
     /**
      * Broadcasts Matrix B in order to perform addition, only works for broadcasting columns
      * 
