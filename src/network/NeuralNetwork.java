@@ -51,8 +51,7 @@ public class NeuralNetwork {
      */
     public Matrix costFunction(Matrix networkOutput, Matrix correctAnswer) {
         Matrix inside = correctAnswer.minusMatrix(networkOutput);
-        System.out.println("//////////////");
-        return inside.productHadamard(inside);
+        return inside.productHadamard(inside).sumOverRows();
     }
 
     /**

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         final long SEED = 513224;
-        int miniBatchSize = 8;
+        int miniBatchSize = 4;
         double learningRate = 0.5;
 
         // Temporary network creation
@@ -28,8 +28,8 @@ public class Main {
         NeuralNetwork net = new NeuralNetwork(layers, 255);
 
         // Type your paths for mnist dataset
-        String trainPath = "C:\\mylifexd\\Studia\\programowanie_obiektowe\\Dataset\\mnist_train.csv";
-        String testPath = "C:\\mylifexd\\Studia\\programowanie_obiektowe\\Dataset\\mnist_test.csv";
+        String trainPath = "C:\\Users\\Mati\\Desktop\\mnist_train.csv";
+        String testPath = "C:\\Users\\Mati\\Desktop\\mnist_test.csv";
 
         List<LabeledImage> imagesTrain = new CsvReader().readCsv(trainPath);
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
@@ -60,11 +60,12 @@ public class Main {
 
             // Need to implement displaying current value of loss function to show how it goes down
         }
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Path to image: ");
-        String path = sc.nextLine();
-        Matrix image = new Matrix(ImageConverter.convertImage(path));
-        image.printAsImage();
-        System.out.println("Predicted: " + net.predict(image));
+
+        // Scanner sc = new Scanner(System.in);
+        // System.out.print("Path to image: ");
+        // String path = sc.nextLine();
+        // Matrix image = new Matrix(ImageConverter.convertImage(path));
+        // image.printAsImage();
+        // System.out.println("Predicted: " + net.predict(image));
     }
 }

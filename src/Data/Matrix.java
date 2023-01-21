@@ -220,7 +220,7 @@ public class Matrix {
         double[][] C = X.getArray();
 
         for (int row = 0; row < nRows; row++) {
-            int sum = 0;
+            double sum = 0;
             for (int col = 0; col < nCols; col++) {
                 sum += A[row][col]; 
             }
@@ -239,7 +239,7 @@ public class Matrix {
         double[][] C = X.getArray();
 
         for (int col = 0; col < nCols; col++) {
-            int sum = 0;
+            double sum = 0;
             for (int row = 0; row < nRows; row++) {
                 sum += A[row][col]; 
             }
