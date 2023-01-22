@@ -43,47 +43,13 @@ public class FullyConnectedLayer extends Layer {
      * @return Matrix of layer activation
      */
     public Matrix fullyConnectedForwardPass(Matrix input) {
-        // Would be lovely if there was a way to choose activation function, 
-        // but first there needs to be more than one working activation function...
-        
         if (_previousLayer == null)
             this.dataX = input;   
 
         this.lastZ = weights.product(input).broadcastAddMatrix(biases);
         this.lastX = this.activationFunction.apply(this.lastZ);
-
-        // Matrix.printMatrix(lastX);
-        // System.out.println("/////////////////");
         return this.lastX;
     }
-
-
-
-
-
-
-
-
-    // FullyConnectedLayer class
-//    public class FullyConnectedLayer {
-//        private ActivationFunction activationFunction;
-//
-//        public FullyConnectedLayer(ActivationFunction activationFunction) {
-//            this.activationFunction = activationFunction;
-//        }
-//
-//        public Matrix fullyConnectedForwardPass(Matrix input) {
-//            if (_previousLayer == null)
-//                this.dataX = input;
-//
-//            this.lastZ = weights.product(input).broadcastAddMatrix(biases);
-//            this.lastX = this.activationFunction.apply(this.lastZ);
-//
-//            // Matrix.printMatrix(lastX);
-//            // System.out.println("/////////////////");
-//            return this.lastX;
-//        }
-//    }
 
     /**
      * Computes output of layer and forwards it to next layers if there are any.
