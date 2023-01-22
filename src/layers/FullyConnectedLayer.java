@@ -1,8 +1,8 @@
 package layers;
 
-import java.util.Random;
-
 import Data.Matrix;
+import java.util.Random;
+import java.lang.Math;
 
 public class FullyConnectedLayer extends Layer {
 
@@ -16,12 +16,14 @@ public class FullyConnectedLayer extends Layer {
     private double _learningRate;
 
 
-    public FullyConnectedLayer(int _inLength, int _outLength, long SEED, double learningRate, int miniBatchSize) {
+    public FullyConnectedLayer(int _inLength, int _outLength, long SEED, double learningRate, int miniBatchSize,
+                               ActivationFunction activationFunction) {
         this._inLength = _inLength;
         this._outLength = _outLength;
         this.SEED = SEED;
         this._learningRate = learningRate;
         this.miniBatchSize = miniBatchSize;
+        this.activationFunction = activationFunction;
 
         setRandomBiases();
         setRandomWeights();
@@ -41,12 +43,40 @@ public class FullyConnectedLayer extends Layer {
             this.dataX = input;   
 
         this.lastZ = weights.product(input).broadcastAddMatrix(biases);
-        this.lastX = this.lastZ.applySigmoid();
+        this.lastX = this.activationFunction.apply(this.lastZ);
 
         // Matrix.printMatrix(lastX);
         // System.out.println("/////////////////");
         return this.lastX;
     }
+
+
+
+
+
+
+
+
+    // FullyConnectedLayer class
+//    public class FullyConnectedLayer {
+//        private ActivationFunction activationFunction;
+//
+//        public FullyConnectedLayer(ActivationFunction activationFunction) {
+//            this.activationFunction = activationFunction;
+//        }
+//
+//        public Matrix fullyConnectedForwardPass(Matrix input) {
+//            if (_previousLayer == null)
+//                this.dataX = input;
+//
+//            this.lastZ = weights.product(input).broadcastAddMatrix(biases);
+//            this.lastX = this.activationFunction.apply(this.lastZ);
+//
+//            // Matrix.printMatrix(lastX);
+//            // System.out.println("/////////////////");
+//            return this.lastX;
+//        }
+//    }
 
     /**
      * Computes output of layer and forwards it to next layers if there are any.
@@ -73,12 +103,12 @@ public class FullyConnectedLayer extends Layer {
 
         // If it's the last layer
         if (_nextLayer == null) {
-            error = error.productHadamard(lastZ.applyDerivativeSigmoid());
+            error = error.productHadamard(this.activationFunction.applyDerivative(lastZ));
             nablaBiases = error;
             nablaWeights = error.product(_previousLayer.lastX.transpose());
         }
         else {
-            error = _nextLayer.weights.transpose().product(error).productHadamard(lastZ.applyDerivativeSigmoid());
+            error = _nextLayer.weights.transpose().product(error).productHadamard(this.activationFunction.applyDerivative(lastZ));
             nablaBiases = error;
             // If it's the first layer we take network inputs
             if (_previousLayer == null)
@@ -112,7 +142,24 @@ public class FullyConnectedLayer extends Layer {
             }
         }
         this.weights = new Matrix(init);
+
     }
+    public void setRandomWeightsGlorot(){
+        // TO DO: IMPLEMENT ANOTHER METHODs TO RANDOMIZE NOT FROM
+        // NORMAL DISTRIBUTION BUT FROM GLOROT/XAVIER OR LECUN OR HE
+
+        Random random = new Random(SEED);
+
+        double[][] init = new double[_outLength][_inLength];
+        double range = Math.sqrt(6.0 / (_inLength + _outLength));
+        for(int i = 0; i < _outLength; i++) {
+            for(int j = 0; j < _inLength; j++) {
+                init[i][j] = (random.nextDouble() * 2 * range) - range;
+            }
+        }
+        this.weights = new Matrix(init);
+    }
+
 
     /**
      * Initializes Biases with random values, currently with zeroes, because why not

@@ -2,10 +2,12 @@ import Data.CsvReader;
 import Data.ImageConverter;
 import Data.LabeledImage;
 import Data.Matrix;
+import layers.ActivationFunction;
+import layers.SigmoidActivation;
 import network.NeuralNetwork;
 import layers.FullyConnectedLayer;
 import layers.Layer;
-
+import layers.ActivationFunction.*;
 import java.util.*;
 
 import static java.util.Collections.shuffle;
@@ -16,18 +18,22 @@ public class Main {
         int miniBatchSize = 2;
         double learningRate = 0.2;
 
+        ActivationFunction sigmoid = new SigmoidActivation();
+
+
         // Temporary network creation
         List<Layer> layers = new ArrayList<>();
-        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, SEED, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, SEED, learningRate, miniBatchSize, sigmoid);
         layers.add(fcl1);
-        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, SEED, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, SEED, learningRate, miniBatchSize, sigmoid);
         layers.add(fcl2);
 
         NeuralNetwork net = new NeuralNetwork(layers, 255);
 
         // Type your paths for mnist dataset
-        String trainPath = "C:\\Users\\konra\\IdeaProjects\\NeuralNet\\Data\\mnist_train.csv";
-        String testPath = "C:\\Users\\konra\\IdeaProjects\\NeuralNet\\Data\\mnist_test.csv";
+        String trainPath = "/Users/mikolajjozefowski/Desktop/dane/mnist_train.csv";
+        String testPath = "/Users/mikolajjozefowski/Desktop/dane/mnist_test.csv";
+
 
         List<LabeledImage> imagesTrain = new CsvReader().readCsv(trainPath);
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
