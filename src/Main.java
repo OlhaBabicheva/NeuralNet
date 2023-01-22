@@ -23,9 +23,9 @@ public class Main {
 
         // Temporary network creation
         List<Layer> layers = new ArrayList<>();
-        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, SEED, learningRate, miniBatchSize, sigmoid);
+        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, "Glorot", SEED, learningRate, miniBatchSize, sigmoid);
         layers.add(fcl1);
-        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, SEED, learningRate, miniBatchSize, sigmoid);
+        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, "Glorot", SEED, learningRate, miniBatchSize, sigmoid);
         layers.add(fcl2);
 
         NeuralNetwork net = new NeuralNetwork(layers, 255);

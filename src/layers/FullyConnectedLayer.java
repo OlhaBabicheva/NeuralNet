@@ -16,7 +16,7 @@ public class FullyConnectedLayer extends Layer {
     private double _learningRate;
 
 
-    public FullyConnectedLayer(int _inLength, int _outLength, long SEED, double learningRate, int miniBatchSize,
+    public FullyConnectedLayer(int _inLength, int _outLength, String init, long SEED, double learningRate, int miniBatchSize,
                                ActivationFunction activationFunction) {
         this._inLength = _inLength;
         this._outLength = _outLength;
@@ -24,9 +24,16 @@ public class FullyConnectedLayer extends Layer {
         this._learningRate = learningRate;
         this.miniBatchSize = miniBatchSize;
         this.activationFunction = activationFunction;
-
         setRandomBiases();
-        setRandomWeights();
+
+        switch (init){
+            case "Normal": setRandomWeights(); break;
+            case "Glorot": setRandomWeightsGlorot(); break;
+            case "He": setRandomWeightsHe(); break;
+            case "LeCun": setRandomWeightsLeCun(); break;
+            default: setRandomWeights(); break;
+        }
+
     }
 
     /**
@@ -129,8 +136,6 @@ public class FullyConnectedLayer extends Layer {
      * Randomly initializes weights from normal distribiution
      */
     public void setRandomWeights(){
-        // TO DO: IMPLEMENT ANOTHER METHODs TO RANDOMIZE NOT FROM 
-        // NORMAL DISTRIBUTION BUT FROM GLOROT/XAVIER OR LECUN OR HE
 
         Random random = new Random(SEED);
 
@@ -145,8 +150,6 @@ public class FullyConnectedLayer extends Layer {
 
     }
     public void setRandomWeightsGlorot(){
-        // TO DO: IMPLEMENT ANOTHER METHODs TO RANDOMIZE NOT FROM
-        // NORMAL DISTRIBUTION BUT FROM GLOROT/XAVIER OR LECUN OR HE
 
         Random random = new Random(SEED);
 
@@ -159,7 +162,31 @@ public class FullyConnectedLayer extends Layer {
         }
         this.weights = new Matrix(init);
     }
+    public void setRandomWeightsLeCun(){
+        Random random = new Random(SEED);
 
+        double[][] init = new double[_outLength][_inLength];
+        double range = Math.sqrt(3.0 / _inLength);
+        for(int i = 0; i < _outLength; i++) {
+            for(int j = 0; j < _inLength; j++) {
+                init[i][j] = (random.nextDouble() * 2 * range) - range;
+            }
+        }
+        this.weights = new Matrix(init);
+    }
+    public void setRandomWeightsHe(){
+
+        Random random = new Random(SEED);
+
+        double[][] init = new double[_outLength][_inLength];
+        double range = Math.sqrt(6.0 / _inLength);
+        for(int i = 0; i < _outLength; i++) {
+            for(int j = 0; j < _inLength; j++) {
+                init[i][j] = (random.nextDouble() * 2 * range) - range;
+            }
+        }
+        this.weights = new Matrix(init);
+    }
 
     /**
      * Initializes Biases with random values, currently with zeroes, because why not
