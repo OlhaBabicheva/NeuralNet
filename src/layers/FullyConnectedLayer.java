@@ -1,8 +1,8 @@
 package layers;
 
-import java.util.Random;
-
 import Data.Matrix;
+import java.util.Random;
+import java.lang.Math;
 
 public class FullyConnectedLayer extends Layer {
 
@@ -16,15 +16,24 @@ public class FullyConnectedLayer extends Layer {
     private double _learningRate;
 
 
-    public FullyConnectedLayer(int _inLength, int _outLength, long SEED, double learningRate, int miniBatchSize) {
+    public FullyConnectedLayer(int _inLength, int _outLength, String init, long SEED, double learningRate, int miniBatchSize,
+                               ActivationFunction activationFunction) {
         this._inLength = _inLength;
         this._outLength = _outLength;
         this.SEED = SEED;
         this._learningRate = learningRate;
         this.miniBatchSize = miniBatchSize;
-
+        this.activationFunction = activationFunction;
         setRandomBiases();
-        setRandomWeights();
+
+        switch (init){
+            case "Normal": setRandomWeights(); break;
+            case "Glorot": setRandomWeightsGlorot(); break;
+            case "He": setRandomWeightsHe(); break;
+            case "LeCun": setRandomWeightsLeCun(); break;
+            default: setRandomWeights(); break;
+        }
+
     }
 
     /**
@@ -34,17 +43,11 @@ public class FullyConnectedLayer extends Layer {
      * @return Matrix of layer activation
      */
     public Matrix fullyConnectedForwardPass(Matrix input) {
-        // Would be lovely if there was a way to choose activation function, 
-        // but first there needs to be more than one working activation function...
-        
         if (_previousLayer == null)
             this.dataX = input;   
 
         this.lastZ = weights.product(input).broadcastAddMatrix(biases);
-        this.lastX = this.lastZ.applySigmoid();
-
-        // Matrix.printMatrix(lastX);
-        // System.out.println("/////////////////");
+        this.lastX = this.activationFunction.apply(this.lastZ);
         return this.lastX;
     }
 
@@ -73,12 +76,12 @@ public class FullyConnectedLayer extends Layer {
 
         // If it's the last layer
         if (_nextLayer == null) {
-            error = error.productHadamard(lastZ.applyDerivativeSigmoid());
+            error = error.productHadamard(this.activationFunction.applyDerivative(lastZ));
             nablaBiases = error;
             nablaWeights = error.product(_previousLayer.lastX.transpose());
         }
         else {
-            error = _nextLayer.weights.transpose().product(error).productHadamard(lastZ.applyDerivativeSigmoid());
+            error = _nextLayer.weights.transpose().product(error).productHadamard(this.activationFunction.applyDerivative(lastZ));
             nablaBiases = error;
             // If it's the first layer we take network inputs
             if (_previousLayer == null)
@@ -99,8 +102,6 @@ public class FullyConnectedLayer extends Layer {
      * Randomly initializes weights from normal distribiution
      */
     public void setRandomWeights(){
-        // TO DO: IMPLEMENT ANOTHER METHODs TO RANDOMIZE NOT FROM 
-        // NORMAL DISTRIBUTION BUT FROM GLOROT/XAVIER OR LECUN OR HE
 
         Random random = new Random(SEED);
 
@@ -109,6 +110,45 @@ public class FullyConnectedLayer extends Layer {
         for(int i = 0; i < _outLength; i++) {
             for(int j = 0; j < _inLength; j++) {
                 init[i][j] = random.nextGaussian();
+            }
+        }
+        this.weights = new Matrix(init);
+
+    }
+    public void setRandomWeightsGlorot(){
+
+        Random random = new Random(SEED);
+
+        double[][] init = new double[_outLength][_inLength];
+        double range = Math.sqrt(6.0 / (_inLength + _outLength));
+        for(int i = 0; i < _outLength; i++) {
+            for(int j = 0; j < _inLength; j++) {
+                init[i][j] = (random.nextDouble() * 2 * range) - range;
+            }
+        }
+        this.weights = new Matrix(init);
+    }
+    public void setRandomWeightsLeCun(){
+        Random random = new Random(SEED);
+
+        double[][] init = new double[_outLength][_inLength];
+        double range = Math.sqrt(3.0 / _inLength);
+        for(int i = 0; i < _outLength; i++) {
+            for(int j = 0; j < _inLength; j++) {
+                init[i][j] = (random.nextDouble() * 2 * range) - range;
+            }
+        }
+        this.weights = new Matrix(init);
+    }
+    public void setRandomWeightsHe(){
+
+        Random random = new Random(SEED);
+
+        double[][] init = new double[_outLength][_inLength];
+        double range = Math.sqrt(6.0 / _inLength);
+        for(int i = 0; i < _outLength; i++) {
+            for(int j = 0; j < _inLength; j++) {
+                init[i][j] = (random.nextDouble() * 2 * range) - range;
             }
         }
         this.weights = new Matrix(init);

@@ -2,10 +2,12 @@ import Data.CsvReader;
 import Data.ImageConverter;
 import Data.LabeledImage;
 import Data.Matrix;
+import layers.ActivationFunction;
+import layers.SigmoidActivation;
 import network.NeuralNetwork;
 import layers.FullyConnectedLayer;
 import layers.Layer;
-
+import layers.ActivationFunction.*;
 import java.util.*;
 
 import static java.util.Collections.shuffle;
@@ -16,21 +18,22 @@ public class Main {
         int miniBatchSize = 2;
         double learningRate = 0.2;
 
+        ActivationFunction sigmoid = new SigmoidActivation();
+
+
         // Temporary network creation
         List<Layer> layers = new ArrayList<>();
-        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, SEED, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl1 = new FullyConnectedLayer(784, 30, "Glorot", SEED, learningRate, miniBatchSize, sigmoid);
         layers.add(fcl1);
-        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, SEED, learningRate, miniBatchSize);
+        FullyConnectedLayer fcl2 = new FullyConnectedLayer(30, 10, "Glorot", SEED, learningRate, miniBatchSize, sigmoid);
         layers.add(fcl2);
 
         NeuralNetwork net = new NeuralNetwork(layers, 255);
 
         // Type your paths for mnist dataset
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Path to training dataset: ");
-        String trainPath = sc.nextLine();
-        System.out.print("Path to testing dataset: ");
-        String testPath = sc.nextLine();
+        String trainPath = "/Users/mikolajjozefowski/Desktop/dane/mnist_train.csv";
+        String testPath = "/Users/mikolajjozefowski/Desktop/dane/mnist_test.csv";
+
 
         List<LabeledImage> imagesTrain = new CsvReader().readCsv(trainPath);
         List<LabeledImage> imagesTest = new CsvReader().readCsv(testPath);
@@ -61,11 +64,10 @@ public class Main {
 
             System.out.println("Success rate after round " + (i+1) + ": " + String.format("%.4f", rate) + ", Average cost: " + String.format("%.4f", net.average));
         }
-        System.out.print("Path to image: ");
-        String path;
         while (true){
-            path = sc.nextLine();
-            if (Objects.equals(path, "quit")) break;
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Path to image: ");
+            String path = sc.nextLine();
             Matrix image = new Matrix(ImageConverter.convertImage(path));
             image.printAsImage();
             System.out.println("Predicted: " + net.predict(image));

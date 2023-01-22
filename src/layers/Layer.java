@@ -17,6 +17,8 @@ public abstract class Layer {
     protected Matrix weights;
     protected Matrix biases;
 
+    protected ActivationFunction activationFunction;
+
     protected Matrix dataX;
     protected Matrix lastX;
     protected Matrix lastZ;
